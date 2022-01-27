@@ -52,10 +52,29 @@ const moviesController = {
     },
     //Aqui dispongo las rutas para trabajar con el CRUD
     add: function (req, res) {
+        db.Genre.findAll()
+        .then(generos=>{
+            res.render("moviesAdd", {allGenres: generos})
+
+        })
+        .catch(error=>{
+            console.log(error);
+        })
         
     },
     create: function (req,res) {
-
+        const {title, rating, awards, release_date, length, genre_id} = req.body;
+        db.Movie.create({
+            title,
+            rating: parseInt(rating),
+            awards: parseInt(awards),
+            release_date,
+            length: parseInt(length),
+            genre_id: parseInt(genre_id)
+        })
+        .then(movie=>{
+            res.redirect("/movies/detail/"+movie.id)
+        })
     },
     edit: function(req,res) {
 
