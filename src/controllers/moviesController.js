@@ -75,12 +75,53 @@ const moviesController = {
         .then(movie=>{
             res.redirect("/movies/detail/"+movie.id)
         })
+        .catch(error=>{
+            console.log(error);
+        })
     },
     edit: function(req,res) {
+        db.Movie.findOne({
+            where: {id: req.params.id},
+            include: [
+                {association:"genre"}
+            ]
+        })
+        .then(Movie=>{
 
+            db.Genre.findAll()
+            .then(generos=>{
+                res.render("moviesEdit", {Movie, allGenres: generos});
+
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+            
+        })
+        .catch(error=>{
+            console.log(error);
+        })
     },
     update: function (req,res) {
-
+        const id = req.params.id
+        const {title, rating, awards, release_date, length, genre_id} = req.body;
+        db.Movie.update({
+            title,
+            rating: parseInt(rating),
+            awards: parseInt(awards),
+            release_date,
+            length: parseInt(length),
+            genre_id: parseInt(genre_id)
+        },
+        {
+            where: {id: req.params.id}
+        })
+        .then(() => {
+            res.redirect("/movies/detail/"+id);
+        })
+        .catch(error=>{
+            console.log(error);
+        })
     },
     delete: function (req,res) {
 
